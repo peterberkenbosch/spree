@@ -4,7 +4,7 @@ module Spree
 
       # Get a sample [Order] hash to use in testing
       # @param options [Hash] additional hash to be merged with the default sample.
-      # @return [Hash] a sample Order hash.
+      # @return [Hash] a sample [Order] hash.
       def self.to_hash(options={})
         {
           number: 'R1234567',
