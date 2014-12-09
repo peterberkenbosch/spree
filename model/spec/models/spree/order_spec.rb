@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Spree::Order do
 
+  let(:customer) { Spree::Customer.new }
   let(:order) { Spree::Order.new }
 
   describe 'initializing' do
@@ -34,20 +35,34 @@ describe Spree::Order do
 
   describe '#cancel!' do
 
-    before { order.cancel! }
+    context 'when order is not yet paid' do
+      let(:order) { Spree::Order.new(:paid => false, :customer => customer) }
+      before { order.cancel! }
 
-    context 'when payment is not final' do
-      let(:payment) { Spree::Payment.new(:final => false) }
+      it 'should not create any credits' do
+        expect(customer.credits.size).to eq(0)
+      end
 
-      it 'should not create any credits'
+      it 'changes the state to canceled' do
+        expect(order.canceled?).to eq(true)
+      end
     end
 
-    context 'when the payment is final' do
-      it 'creates a credit equal to the payment amount'
-    end
+    context 'when order is paid' do
+      let(:order) { Spree::Order.new(:paid => true, :total => 100, :customer => customer) }
+      before { order.cancel! }
 
-    it 'changes the state to canceled' do
-      expect(order.state).to eq('canceled')
+      it 'creates a credit for the customer' do
+        expect(customer.credits.size).to eq(1)
+      end
+
+      it 'creates a credit equal to the total' do
+        expect(customer.credits.first.amount).to eq(100)
+      end
+
+      it 'changes the state to canceled' do
+        expect(order.canceled?).to eq(true)
+      end
     end
 
   end
@@ -88,13 +103,6 @@ describe Spree::Order do
     describe "#number=" do
       it 'raises' do
         expect{ order.number = '999' }.to raise_exception(Spree::AttributeLocked)
-      end
-    end
-
-    describe '#state=' do
-      before { order.state = 'foo' }
-      it 'sets the state attribute' do
-        expect(order.state).to eq('foo')
       end
     end
 
