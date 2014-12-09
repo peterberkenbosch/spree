@@ -20,3 +20,6 @@ Virtus.finalize
 # require exceptions
 
 require 'exceptions/spree/attribute_locked'
+
+# Remove annoying deprecation message
+I18n.enforce_available_locales = false
