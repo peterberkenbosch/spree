@@ -30,7 +30,7 @@ module Spree
     # the line item (tried passing a LineItem here instead but didn't feel right
     # either)
     def add_item(variant, quantity = 1, options = {})
-      if item = self.items.find { |i| i.variant_id == variant.id }
+      if item = find_item_by_variant(variant.id)
         item.quantity += quantity.to_i
       else
         item = LineItem.new(variant_id: variant.id, price: variant.price, quantity: quantity)
@@ -42,7 +42,7 @@ module Spree
     end
 
     def remove_item(variant, quantity = 1)
-      item = self.items.find { |l| l.variant_id == variant.id }
+      item = find_item_by_variant(variant.id)
 
       self.items.delete line_item
       self.items
@@ -73,6 +73,10 @@ module Spree
 
     def persisted?
       self.created_at || false
+    end
+
+    def find_item_by_variant(variant_id)
+      self.items.find { |i| i.variant_id == variant_id }
     end
 
   end
