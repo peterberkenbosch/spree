@@ -13,6 +13,9 @@ describe Spree::Order do
     before { order.cancel! }
 
     context 'when payment is not final' do
+      let(:payment) { Spree::Payment.new(:final => false) }
+
+      it 'should not create any credits'
     end
 
     context 'when the payment is final' do
