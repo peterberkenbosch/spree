@@ -24,7 +24,13 @@ module Spree
 
     def cancel!
       self.canceled = true
-      customer.add_credit(Spree::Credit.new(:amount => self.total)) if self.paid?
+      if self.paid?
+        customer.add_credit(Spree::Credit.new(:amount => self.total))
+      else
+        payments.each do |payment|
+          payment.cancel!
+        end
+      end
     end
 
     def canceled?

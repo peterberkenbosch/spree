@@ -4,6 +4,7 @@ describe Spree::Order do
 
   let(:customer) { Spree::Customer.new }
   let(:order) { Spree::Order.new }
+  let(:payment) { Spree::Payment.new }
 
   describe 'initializing' do
 
@@ -36,7 +37,7 @@ describe Spree::Order do
   describe '#cancel!' do
 
     context 'when order is not yet paid' do
-      let(:order) { Spree::Order.new(:paid => false, :customer => customer) }
+      let(:order) { Spree::Order.new(:paid => false, :customer => customer, :payments => [payment]) }
       before { order.cancel! }
 
       it 'should not create any credits' do
@@ -46,10 +47,15 @@ describe Spree::Order do
       it 'changes the state to canceled' do
         expect(order.canceled?).to eq(true)
       end
+
+      it 'cancels the payments' do
+        expect(payment.canceled?).to eq(true)
+      end
+
     end
 
     context 'when order is paid' do
-      let(:order) { Spree::Order.new(:paid => true, :total => 100, :customer => customer) }
+      let(:order) { Spree::Order.new(:paid => true, :total => 100, :customer => customer, :payments => [payment]) }
       before { order.cancel! }
 
       it 'creates a credit for the customer' do
@@ -62,6 +68,10 @@ describe Spree::Order do
 
       it 'changes the state to canceled' do
         expect(order.canceled?).to eq(true)
+      end
+
+      it 'does not cancel the payments' do
+        expect(payment.canceled?).to eq(false)
       end
     end
 
