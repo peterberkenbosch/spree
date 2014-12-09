@@ -16,6 +16,9 @@ module Spree
     attribute :fulfilled, Boolean, :default => false
     attribute :shipped, Boolean, :default => false
     attribute :total, Float, default: 0
+    attribute :item_total, Float, default: 0
+    attribute :tax_total, Float, default: 0
+    attribute :shipping_total, Float, default: 0
 
     validates_presence_of :number
 
@@ -51,6 +54,26 @@ module Spree
     def number=(number)
       raise Spree::AttributeLocked.new('Number cannot be changed on a saved instance') if persisted?
       super number
+    end
+
+    def total=(total)
+      raise Spree::AttributeLocked.new('Total cannot be changed on a saved instance') if persisted?
+      super total
+    end
+
+    def item_total=(total)
+      raise Spree::AttributeLocked.new('Item total cannot be changed on a saved instance') if persisted?
+      super total
+    end
+
+    def shipping_total=(total)
+      raise Spree::AttributeLocked.new('Shipping total cannot be changed on a saved instance') if persisted?
+      super total
+    end
+
+    def tax_total=(total)
+      raise Spree::AttributeLocked.new('Tax total cannot be changed on a saved instance') if persisted?
+      super total
     end
 
     private

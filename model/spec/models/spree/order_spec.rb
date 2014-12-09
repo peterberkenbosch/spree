@@ -106,6 +106,30 @@ describe Spree::Order do
       end
     end
 
+    describe "#total=" do
+      it 'raises' do
+        expect{ order.total = '999' }.to raise_exception(Spree::AttributeLocked)
+      end
+    end
+
+    describe "#item_total=" do
+      it 'raises' do
+        expect{ order.item_total = '999' }.to raise_exception(Spree::AttributeLocked)
+      end
+    end
+
+    describe "#tax_total=" do
+      it 'raises' do
+        expect{ order.tax_total = '999' }.to raise_exception(Spree::AttributeLocked)
+      end
+    end
+
+    describe "#shipping_total=" do
+      it 'raises' do
+        expect{ order.shipping_total = '999' }.to raise_exception(Spree::AttributeLocked)
+      end
+    end
+
   end
 
 end
