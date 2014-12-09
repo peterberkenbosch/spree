@@ -4,5 +4,6 @@ module Spree
 
     attribute :product, 'Spree::Product'
     attribute :sku, String
+    attribute :price, BigDecimal
   end
 end
