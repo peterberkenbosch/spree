@@ -183,10 +183,6 @@ describe Spree::Order do
     it 'sets created_at attribute' do
       expect(order.created_at).to be()
     end
-
-    it 'saves the payments'
-    it 'saves the customer'
-
   end
 
   context 'when already persisted' do
