@@ -10,6 +10,7 @@ module Spree
     attribute :items, Array['Spree::Item']
     attribute :customer, 'Spree::Customer'
     attribute :shipments, Array['Spree::Shipment']
+    attribute :refunds, Array['Spree::Refund']
     attribute :canceled, Boolean, :default => false
     attribute :paid, Boolean, :default => true
     attribute :fulfilled, Boolean, :default => false

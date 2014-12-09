@@ -128,6 +128,10 @@ describe Spree::Order do
         expect(customer.credits.size).to eq(0)
       end
 
+      it 'should not create any refunds' do
+        expect(customer.refunds.size).to eq(0)
+      end
+
       it 'changes the state to canceled' do
         expect(order.canceled?).to eq(true)
       end
