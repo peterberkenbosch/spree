@@ -24,10 +24,6 @@ module Spree
       # TODO: return serialized JSON
     end
 
-    def from_json(json)
-      # TODO: deserialize from JSON
-    end
-
     def payments=(payments)
       raise Spree::AttributeLocked.new('Payments cannot be changed on a saved instance') if persisted?
       super payments
