@@ -4,6 +4,33 @@ describe Spree::Order do
 
   let(:order) { Spree::Order.new }
 
+  describe 'initializing' do
+
+    it 'should initialize attributes & child associations' do
+      order = Spree::Order.new(number: 'R1234567',
+                               items: [ { variant: { sku: 'ROR-123',
+                                                     product: { name: 'Ruby on Rails Tote' } },
+                                          quantity: 2 } ])
+
+      expect(order.number).to eq 'R1234567'
+      expect(order.items[0]).to be_an_instance_of Spree::Item
+      expect(order.items.size).to eq 1
+      expect(order.items[0].variant).to be_an_instance_of Spree::Variant
+      expect(order.items[0].variant.sku).to eq 'ROR-123'
+      expect(order.items[0].variant.product).to be_an_instance_of Spree::Product
+      expect(order.items[0].variant.product.name).to eq 'Ruby on Rails Tote'
+    end
+
+  end
+
+  describe 'validation' do
+
+    it 'should require number' do
+      expect(order.valid?).to be_falsy
+      expect(order.errors.first).to eq [:number, "can't be blank"]
+    end
+  end
+
   describe '#total' do
     it 'should supply the total returned by the chain'
   end

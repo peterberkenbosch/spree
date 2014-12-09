@@ -1,20 +1,19 @@
-require 'models/spree/payment'
-require 'models/spree/customer'
-require 'models/spree/item'
 require 'exceptions/spree/attribute_locked'
 
 module Spree
   class Order
-
-    include Virtus.model
+    include Virtus.model(finalize: false)
+    include ActiveModel::Validations
 
     attr_accessor :state
     attr_accessor :created_at
 
     attribute :number, String
-    attribute :payments, Array[Spree::Payment]
-    attribute :items, Array[Spree::Item]
-    attribute :customer, Spree::Customer
+    attribute :payments, Array['Spree::Payment']
+    attribute :items, Array['Spree::Item']
+    attribute :customer, 'Spree::Customer'
+
+    validates_presence_of :number
 
     def cancel!
       self.state = 'canceled'

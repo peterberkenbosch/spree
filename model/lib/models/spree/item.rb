@@ -1,7 +1,8 @@
 module Spree
   class Item
+    include Virtus.model(finalize: false)
 
-    include Virtus.model
-
+    attribute :variant, 'Spree::Variant'
+    attribute :quantity, Integer
   end
 end
