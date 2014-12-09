@@ -44,6 +44,11 @@ module Spree
       super customer
     end
 
+    def number=(number)
+      raise Spree::AttributeLocked.new('Number cannot be changed on a saved instance') if persisted?
+      super number
+    end
+
     private
 
     def persisted?

@@ -31,26 +31,43 @@ describe Spree::Order do
     it 'sets created_at attribute' do
       expect(order.created_at).to be()
     end
+
+    it 'saves the payments'
+    it 'saves the customer'
+
   end
 
   context 'when already persisted' do
     before { order.save! }
 
     describe '#payments=' do
-      it 'raises an exception' do
+      it 'raises' do
         expect{ order.payments = [] }.to raise_exception(Spree::AttributeLocked)
       end
     end
 
     describe '#items=' do
-      it 'raises an exception' do
+      it 'raises' do
         expect{ order.items = [] }.to raise_exception(Spree::AttributeLocked)
       end
     end
 
     describe '#cutomer=' do
-      it 'raises an exception' do
+      it 'raises' do
         expect{ order.customer = nil }.to raise_exception(Spree::AttributeLocked)
+      end
+    end
+
+    describe "#number=" do
+      it 'raises' do
+        expect{ order.number = '999' }.to raise_exception(Spree::AttributeLocked)
+      end
+    end
+
+    describe '#state=' do
+      before { order.state = 'foo' }
+      it 'sets the state attribute' do
+        expect(order.state).to eq('foo')
       end
     end
 
