@@ -2,10 +2,7 @@ require 'spec_helper'
 
 describe Spree::Order do
 
-  let(:customer) { Spree::Customer.new }
-  let(:payment) { Spree::Payment.new }
   let(:order) { Spree::Order.new }
-  #let(:order) { Spree::Order.new (:payments => [payment], :customer => customer) }
 
   describe '#total' do
     it 'should supply the total returned by the chain'
@@ -36,18 +33,27 @@ describe Spree::Order do
     end
   end
 
-  describe '#save on a persisted order' do
-    context 'when items have changed' do
-      it 'raises an exception'
+  context 'when already persisted' do
+    before { order.save! }
+
+    describe '#payments=' do
+      it 'raises an exception' do
+        expect{ order.payments = [] }.to raise_exception(Spree::AttributeLocked)
+      end
     end
 
-    context 'when customer has changed' do
-      it 'raises an exception'
+    describe '#items=' do
+      it 'raises an exception' do
+        expect{ order.items = [] }.to raise_exception(Spree::AttributeLocked)
+      end
     end
 
-    context 'when payments have changed' do
-      it 'raises an exception'
+    describe '#cutomer=' do
+      it 'raises an exception' do
+        expect{ order.customer = nil }.to raise_exception(Spree::AttributeLocked)
+      end
     end
+
   end
 
 end
