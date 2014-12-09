@@ -7,10 +7,7 @@ describe Spree::Order do
   describe 'initializing' do
 
     it 'should initialize attributes & child associations' do
-      order = Spree::Order.new(number: 'R1234567',
-                               items: [ { variant: { sku: 'ROR-123',
-                                                     product: { name: 'Ruby on Rails Tote' } },
-                                          quantity: 2 } ])
+      order = Spree::Order.new(Spree::Samples::OrderSample.to_hash)
 
       expect(order.number).to eq 'R1234567'
       expect(order.items[0]).to be_an_instance_of Spree::Item

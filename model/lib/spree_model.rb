@@ -18,8 +18,10 @@ require 'models/spree/shipping_rate'
 Virtus.finalize
 
 # require exceptions
-
 require 'exceptions/spree/attribute_locked'
+
+# require testing_support
+require 'testing_support/spree/samples/order_sample.rb'
 
 # Remove annoying deprecation message
 I18n.enforce_available_locales = false
