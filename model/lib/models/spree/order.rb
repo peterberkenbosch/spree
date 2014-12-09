@@ -23,9 +23,13 @@ module Spree
     validates_presence_of :number
 
     def cancel!
+      raise Spree::IllegalOperation.new('Cannot cancel an order that has been fulfilled') if fulfilled?
+      raise Spree::IllegalOperation.new('Cannot cancel an order that has been shipped') if shipped?
+
       self.canceled = true
+
       if self.paid?
-        customer.add_credit(Spree::Credit.new(:amount => self.total))
+        customer && customer.add_credit(Spree::Credit.new(:amount => self.total))
       else
         payments.each do |payment|
           payment.cancel!
@@ -35,6 +39,14 @@ module Spree
 
     def canceled?
       self.canceled
+    end
+
+    def fulfilled?
+      self.fulfilled
+    end
+
+    def shippped?
+      self.shipped
     end
 
     def save!

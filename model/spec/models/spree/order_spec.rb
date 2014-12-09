@@ -75,6 +75,22 @@ describe Spree::Order do
       end
     end
 
+    context "when order is fulfilled" do
+      before { order.fulfilled = true}
+
+      it 'raises' do
+        expect{ order.cancel! }.to raise_exception(Spree::IllegalOperation)
+      end
+    end
+
+    context "when order is shipped" do
+      before { order.shipped = true}
+
+      it 'raises' do
+        expect{ order.cancel! }.to raise_exception(Spree::IllegalOperation)
+      end
+    end
+
   end
 
   describe "#save" do

@@ -19,6 +19,7 @@ Virtus.finalize
 
 # require exceptions
 require 'exceptions/spree/attribute_locked'
+require 'exceptions/spree/illegal_operation'
 
 # require testing_support
 require 'testing_support/spree/samples/order_sample.rb'
