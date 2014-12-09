@@ -66,6 +66,58 @@ describe Spree::Order do
     end
   end
 
+  describe '#void!' do
+    context 'when order is not yet paid' do
+      let(:order) { Spree::Order.new(:paid => false, :shipments => [shipment]) }
+
+      before { order.void! }
+      it 'changes the state to voided' do
+        expect(order.voided?).to eq(true)
+      end
+    end
+
+    context 'when order is canceled' do
+      let(:order) { Spree::Order.new(:canceled => true) }
+
+      it 'raises' do
+        expect{ order.void! }.to raise_exception(Spree::IllegalOperation)
+      end
+    end
+
+    context 'when order is shipped' do
+      let(:order) { Spree::Order.new(:shipped => true) }
+
+      it 'raises' do
+        expect{ order.void! }.to raise_exception(Spree::IllegalOperation)
+      end
+    end
+
+    context 'when order is voided' do
+      let(:order) { Spree::Order.new(:voided => true) }
+
+      it 'raises' do
+        expect{ order.void! }.to raise_exception(Spree::IllegalOperation)
+      end
+    end
+
+    context 'when order is fulfilled' do
+      let(:order) { Spree::Order.new(:fulfilled => true) }
+
+      it 'raises' do
+        expect{ order.void! }.to raise_exception(Spree::IllegalOperation)
+      end
+    end
+
+    context 'when order is paid' do
+      let(:order) { Spree::Order.new(:paid => true) }
+      before { order.void! }
+
+      it 'changes the state to voided' do
+        expect(order.voided?).to eq(true)
+      end
+    end
+  end
+
   describe '#cancel!' do
 
     context 'when order is not yet paid' do

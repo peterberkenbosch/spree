@@ -14,6 +14,8 @@ module Spree
     attribute :paid, Boolean, :default => true
     attribute :fulfilled, Boolean, :default => false
     attribute :shipped, Boolean, :default => false
+    attribute :shipped, Boolean, :default => false
+    attribute :voided, Boolean, :default => false
     attribute :total, Float, default: 0
     attribute :item_total, Float, default: 0
     attribute :tax_total, Float, default: 0
@@ -49,12 +51,25 @@ module Spree
     end
 
     def ship!
-      raise Spree::IllegalOperation.new('Cannot cancel an order that has been shipped') if !paid?
+      raise Spree::IllegalOperation.new('Cannot ship an order unless it has been paid') if !paid?
       raise Spree::IllegalOperation.new('Cannot ship an order that has been shipped') if shipped?
 
       self.shipped = true
 
       shipments.each { |shipment| shipment.ship! }
+    end
+
+    def voided?
+      self.voided
+    end
+
+    def void!
+      raise Spree::IllegalOperation.new('Cannot void an order that has been fulfilled') if fulfilled?
+      raise Spree::IllegalOperation.new('Cannot void an order that has been shipped') if shipped?
+      raise Spree::IllegalOperation.new('Cannot void an order that has been canceled') if canceled?
+      raise Spree::IllegalOperation.new('Cannot void an order that has been voided') if voided?
+
+      self.voided = true
     end
 
     def save!
