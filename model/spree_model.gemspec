@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
 
   s.add_dependency 'activemodel', '~> 4.1.8'
+  s.add_dependency 'virtus', '~> 1.0.3'
 
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'pry'
