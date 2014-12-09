@@ -16,6 +16,8 @@ require 'models/spree/credit'
 require 'models/spree/shipping_method'
 require 'models/spree/shipping_rate'
 require 'models/spree/shipment'
+require 'models/spree/refund'
+
 Virtus.finalize
 
 # require exceptions
