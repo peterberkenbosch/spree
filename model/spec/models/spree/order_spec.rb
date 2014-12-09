@@ -5,6 +5,7 @@ describe Spree::Order do
   let(:customer) { Spree::Customer.new }
   let(:order) { Spree::Order.new }
   let(:payment) { Spree::Payment.new }
+  let(:shipment) { Spree::Shipment.new }
 
   describe 'initializing' do
 
@@ -32,6 +33,37 @@ describe Spree::Order do
 
   describe '#total' do
     it 'should supply the total returned by the chain'
+  end
+
+  describe '#ship!' do
+    context 'when order is not yet paid' do
+      let(:order) { Spree::Order.new(:paid => false, :shipments => [shipment]) }
+
+      it 'raises' do
+        expect{ order.ship! }.to raise_exception(Spree::IllegalOperation)
+      end
+    end
+
+    context 'when order is shipped' do
+      let(:order) { Spree::Order.new(:shipped => true) }
+
+      it 'raises' do
+        expect{ order.ship! }.to raise_exception(Spree::IllegalOperation)
+      end
+    end
+
+    context 'when order is paid' do
+      let(:order) { Spree::Order.new(:paid => true, :shipments => [shipment]) }
+      before { order.ship! }
+
+      it 'changes the state to shipped' do
+        expect(order.shipped?).to eq(true)
+      end
+
+      it 'ships the shipments' do
+        expect(shipment.shipped?).to eq(true)
+      end
+    end
   end
 
   describe '#cancel!' do

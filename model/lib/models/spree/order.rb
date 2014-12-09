@@ -1,5 +1,3 @@
-require 'exceptions/spree/attribute_locked'
-
 module Spree
   class Order
     include Virtus.model(finalize: false)
@@ -11,6 +9,7 @@ module Spree
     attribute :payments, Array['Spree::Payment']
     attribute :items, Array['Spree::Item']
     attribute :customer, 'Spree::Customer'
+    attribute :shipments, Array['Spree::Shipment']
     attribute :canceled, Boolean, :default => false
     attribute :paid, Boolean, :default => true
     attribute :fulfilled, Boolean, :default => false
@@ -47,6 +46,15 @@ module Spree
 
     def shippped?
       self.shipped
+    end
+
+    def ship!
+      raise Spree::IllegalOperation.new('Cannot cancel an order that has been shipped') if !paid?
+      raise Spree::IllegalOperation.new('Cannot ship an order that has been shipped') if shipped?
+
+      self.shipped = true
+
+      shipments.each { |shipment| shipment.ship! }
     end
 
     def save!
