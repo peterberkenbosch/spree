@@ -22,6 +22,11 @@ module Spree
 
     def save!
       self.created_at = Time.now
+      # TODO: return serialized JSON
+    end
+
+    def from_json(json)
+      # TODO: deserialize from JSON
     end
 
     def payments=(payments)
