@@ -4,6 +4,7 @@ module Spree
 
     attribute :final, Boolean
     attribute :canceled, Boolean, :default => false
+    attribute :amount, Float
 
     def cancel!
       self.canceled = true
@@ -13,5 +14,11 @@ module Spree
     def canceled?
       self.canceled
     end
+
+    def amount=(value)
+      raise Spree::AttributeLocked.new('Amount cannot be changed') if self.amount
+      super value
+    end
+
   end
 end

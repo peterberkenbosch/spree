@@ -12,4 +12,14 @@ describe Spree::Payment do
     end
   end
 
+  describe '#amount=' do
+    context 'when the amount is already set' do
+      let(:payment) { Spree::Payment.new(amount: 50) }
+
+      it 'raises an exception' do
+        expect{ payment.amount = 50 }.to raise_exception(Spree::AttributeLocked)
+      end
+    end
+  end
+
 end
