@@ -269,53 +269,53 @@ describe Spree::Order do
     end
   end
 
-  context 'when already persisted' do
+  context 'when saved' do
     before { order.save! }
 
-    describe '#payments=' do
-      it 'raises' do
+    describe 'setting payments' do
+      it 'raises an exeption' do
         expect{ order.payments = [] }.to raise_exception(Spree::AttributeLocked)
       end
     end
 
-    describe '#items=' do
-      it 'raises' do
+    describe 'setting items' do
+      it 'raises an exeption' do
         expect{ order.items = [] }.to raise_exception(Spree::AttributeLocked)
       end
     end
 
-    describe '#cutomer=' do
-      it 'raises' do
+    describe 'setting the customer' do
+      it 'raises an exeption' do
         expect{ order.customer = nil }.to raise_exception(Spree::AttributeLocked)
       end
     end
 
-    describe "#number=" do
-      it 'raises' do
+    describe "changing the number" do
+      it 'raises an exeption' do
         expect{ order.number = '999' }.to raise_exception(Spree::AttributeLocked)
       end
     end
 
-    describe "#total=" do
-      it 'raises' do
+    describe "changing the total" do
+      it 'raises an exeption' do
         expect{ order.total = '999' }.to raise_exception(Spree::AttributeLocked)
       end
     end
 
-    describe "#item_total=" do
-      it 'raises' do
+    describe "changing the item total" do
+      it 'raises an exeption' do
         expect{ order.item_total = '999' }.to raise_exception(Spree::AttributeLocked)
       end
     end
 
-    describe "#tax_total=" do
-      it 'raises' do
+    describe "changing the tax total" do
+      it 'raises an exeption' do
         expect{ order.tax_total = '999' }.to raise_exception(Spree::AttributeLocked)
       end
     end
 
-    describe "#shipping_total=" do
-      it 'raises' do
+    describe "changing the shipping total" do
+      it 'raises an exeption' do
         expect{ order.shipping_total = '999' }.to raise_exception(Spree::AttributeLocked)
       end
     end
