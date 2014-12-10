@@ -10,8 +10,6 @@ describe Spree::Customer do
     it 'adds the credit to the collection' do
       expect(customer.credits).to include(credit)
     end
-
-    it 'saves the credit'
   end
 
 end
