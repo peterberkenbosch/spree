@@ -19,7 +19,6 @@ module Spree
     attribute :shipping_total, BigDecimal
     attribute :tax_total, BigDecimal
     attribute :token, String
-    attribute :sku, String
 
     # Creates or updates an [Item] based upon the variant and quantity.
     #
