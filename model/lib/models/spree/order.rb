@@ -11,6 +11,7 @@ module Spree
     attribute :customer, 'Spree::Customer'
     attribute :shipments, Array['Spree::Shipment']
     attribute :refunds, Array['Spree::Refund']
+    attribute :credits, Array['Spree::Credit']
     attribute :canceled, Boolean, :default => false
     attribute :paid, Boolean, :default => true
     attribute :fulfilled, Boolean, :default => false
@@ -69,6 +70,15 @@ module Spree
       raise Spree::IllegalOperation.new('Cannot void an order that has been voided') if voided?
 
       self.voided = true
+    end
+
+    def refund!(amount, credit=false)
+      raise Spree::IllegalOperation.new('Cannot refund an unpaid order') if !paid?
+      raise Spree::IllegalOperation.new('Cannot refund an amount greater than total') if amount > self.total
+
+      self.payments.each do |payment|
+
+      end
     end
 
     def save!
