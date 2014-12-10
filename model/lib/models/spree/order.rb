@@ -1,5 +1,5 @@
 module Spree
-  class Order
+  class Order < Spree::ModelBase
     include Virtus.model(finalize: false)
     include ActiveModel::Validations
 
@@ -26,9 +26,7 @@ module Spree
     validates_presence_of :number
 
     def cancel!
-      raise Spree::IllegalOperation.new('Cannot cancel an order that has been fulfilled') if fulfilled?
-      raise Spree::IllegalOperation.new('Cannot cancel an order that has been shipped') if shipped?
-
+      block_states('cancel!', %w(fulfilled shipped))
       self.canceled = true
 
       if !self.paid?
@@ -39,27 +37,22 @@ module Spree
     end
 
     def ship!
-      raise Spree::IllegalOperation.new('Cannot ship an order unless it has been paid') if !paid?
-      raise Spree::IllegalOperation.new('Cannot ship an order that has been shipped') if shipped?
+      block_states('ship!', %w(shipped))
+      require_states('ship!', %w(paid))
 
       self.shipped = true
-
       shipments.each { |shipment| shipment.ship! }
     end
 
     def void!
-      raise Spree::IllegalOperation.new('Cannot void an order that has been fulfilled') if fulfilled?
-      raise Spree::IllegalOperation.new('Cannot void an order that has been shipped') if shipped?
-      raise Spree::IllegalOperation.new('Cannot void an order that has been canceled') if canceled?
-      raise Spree::IllegalOperation.new('Cannot void an order that has been voided') if voided?
-
+      block_states('void!', %w(fulfilled shipped canceled voided))
       self.voided = true
     end
 
     def refund!(amount=nil)
       amount ||= self.total
+      require_states('refund!', %w(paid))
       raise Spree::IllegalOperation.new('Cannot refund an unsaved order') if !persisted?
-      raise Spree::IllegalOperation.new('Cannot refund an unpaid order') if !paid?
       raise Spree::IllegalOperation.new('Cannot refund an amount greater than total') if amount > self.total
 
       payment_total = 0

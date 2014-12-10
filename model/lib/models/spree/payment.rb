@@ -1,5 +1,5 @@
 module Spree
-  class Payment
+  class Payment < Spree::ModelBase
     include Virtus.model(finalize: false)
 
     attribute :canceled, Boolean, :default => false
@@ -11,18 +11,13 @@ module Spree
     attribute :refund_balance, Float, :default => 0
 
     def cancel!
-      raise Spree::IllegalOperation.new('Cannot cancel a refunded payment') if self.refunded
-      raise Spree::IllegalOperation.new('Cannot cancel a canceled payment') if self.canceled
-      raise Spree::IllegalOperation.new('Cannot cancel a paid payment') if self.paid
-      raise Spree::IllegalOperation.new('Cannot cancel a a partially refunded payment') if self.partially_refunded
-
+      block_states('cancel!', %w(refunded canceled paid partially_refunded))
       self.canceled = true
-      # TODO - potentially do something with the payment method, etc. (like void the payment on gateway)
+      # TODO - do something with the payment method, etc. (like void the payment on gateway)
     end
 
     def refund!(amount=nil)
-      raise Spree::IllegalOperation.new('Cannot refund a canceled payment') if self.canceled
-      raise Spree::IllegalOperation.new('Cannot refund a canceled payment') if self.refunded
+      block_states('refund!', %w(canceled refunded))
 
       if amount == nil
         self.refunded = true
@@ -40,10 +35,7 @@ module Spree
     end
 
     def pay!
-      raise Spree::IllegalOperation.new('Cannot pay a refunded payment') if self.refunded
-      raise Spree::IllegalOperation.new('Cannot pay a canceled payment') if self.canceled
-      raise Spree::IllegalOperation.new('Cannot pay a paid payment') if self.paid
-      raise Spree::IllegalOperation.new('Cannot pay a partially refunded payment') if self.partially_refunded
+      block_states('pay!', %w(refunded canceled paid partially_refunded))
       self.paid = true
     end
 

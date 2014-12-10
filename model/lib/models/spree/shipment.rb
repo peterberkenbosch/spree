@@ -1,5 +1,5 @@
 module Spree
-  class Shipment
+  class Shipment < Spree::ModelBase
     include Virtus.model(finalize: false)
 
     attribute :shipped, Boolean, :default => false
