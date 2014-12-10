@@ -146,14 +146,6 @@ describe Spree::Order do
       let(:order) { Spree::Order.new(:paid => true, :total => 100, :customer => customer, :payments => [payment]) }
       before { order.cancel! }
 
-      it 'creates a credit for the customer' do
-        expect(customer.credits.size).to eq(1)
-      end
-
-      it 'creates a credit equal to the total' do
-        expect(customer.credits.first.amount).to eq(100)
-      end
-
       it 'changes the state to canceled' do
         expect(order.canceled?).to eq(true)
       end

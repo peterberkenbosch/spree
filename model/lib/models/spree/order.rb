@@ -30,9 +30,7 @@ module Spree
 
       self.canceled = true
 
-      if self.paid?
-        customer && customer.add_credit(Spree::Credit.new(:amount => self.total))
-      else
+      if !self.paid?
         payments.each do |payment|
           payment.cancel!
         end
