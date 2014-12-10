@@ -114,98 +114,111 @@ describe Spree::Order do
     end
   end
 
-  describe '#refund!' do
+  describe '#credit!' do
+
+    # context 'when store credit is requested' do
+    #   before { order.refund!(100, true) }
+
+    #   it 'creates a store credit equal to the total' do
+    #     expects(order.credits.first.amount).to eq(100)
+    #   end
+
+    #   it 'refunds the payment' do
+    #     expects(order.refunds.first.payments).to include(payment)
+    #   end
+
+    #   it 'the refund is for the full amount' do
+    #     expects(order.refunds.first.amount).to eq(100)
+    #   end
+    # end
+
+  end
+
+  describe '#refund! on saved order' do
     let(:payment) { Spree::Payment.new(:amount => 100) }
-    let(:order) { Spree::Order.new(:total => 100, :payments => [payment]) }
-
-    context 'when store credit is requested' do
-      before { order.refund!(100, true) }
-
-      it 'creates a store credit equal to the total' do
-        expects(order.credits.first.amount).to eq(100)
-      end
-
-      it 'refunds the payment' do
-        expects(order.refunds.first.payments).to include(payment)
-      end
-
-      it 'the refund is for the full amount' do
-        expects(order.refunds.first.amount).to eq(100)
-      end
-    end
-
-    context 'when there are multiple payments' do
-      let(:payment_1) { Spree::Payment.new(:amount => 25) }
-      let(:payment_2) { Spree::Payment.new(:amount => 50) }
-
-      let(:order) { Spree::Order.new(:total => 75, :payments => [payment_1, payment_2]) }
-
-      context 'and the first payment exceeds the refund amount' do
-        before { order.refund!(20, false) }
-
-        it 'refunds the specified amount' do
-          expects(order.refunds.first.amount).to eq(20)
-        end
-
-        it 'refunds the first payment' do
-          expects(order.refunds.first.payments).to include(payment_1)
-        end
-
-        it 'refunds a partial amount of the first payment' do
-          expects(order.refunds.first.payments[0].amount).to eq(20)
-        end
-
-        it 'does not refund the second payment' do
-          expects(order.refunds.first.payments).not_to include(payment_2)
-        end
-      end
-
-      context 'and the refund amount exceeds the first payment' do
-        before { order.refund!(60, false) }
-
-        it 'refunds the first payment' do
-          expects(order.refunds.first.payments).to include(payment_1)
-        end
-
-        it 'refunds the specified amount' do
-          expects(order.refunds.first.amount).to eq(60)
-        end
-
-        it 'refunds the full amount of the first payment' do
-          expects(order.refunds.first.payments[0].amount).to eq(25)
-        end
-
-        it 'refunds the second payment' do
-          expects(order.refunds.first.payments).to include(payment_2)
-        end
-
-        it 'refunds a partial amount of the second payment' do
-          expects(order.refunds.first.payments[1].amount).to eq(35)
-        end
-      end
-    end
+    subject(:order) { Spree::Order.new(:total => 100, :payments => [payment]) }
+    before { order.save! }
 
     context 'when order has not been paid' do
-      before { order.paid = false}
+      before { order.paid = false }
 
       it 'raises an exception' do
         expect{ order.refund!(100) }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
-    context 'when requested amount exceeds total' do
+    context 'when no amount is specified' do
+      before { order.refund! }
+
+      it 'refunds the total' do
+        expect(order.refunds.first.amount).to eq(100)
+      end
+    end
+
+    context 'when an amount less than total is specified' do
+      before { order.refund!(75) }
+
+      it 'refunds the partial amount' do
+        expect(order.refunds.first.amount).to eq(75)
+      end
+    end
+
+    context 'when an amount equal to the total is specified' do
+      before { order.refund!(100) }
+
+      it 'refunds the partial amount' do
+        expect(order.refunds.first.amount).to eq(100)
+      end
+    end
+
+    context 'when an amount greater than the total is specified' do
       it 'raises an exception' do
         expect{ order.refund!(125) }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
-    context 'when requested amount exceeds total of all payments' do
-      let(:payment) { Spree::Payment.new(:amount => 50) }
-      let(:order) { Spree::Order.new(:total => 100, :payments => [payment]) }
+    context 'when there are two payments' do
+      let(:payment_1) { Spree::Payment.new(:amount => 25) }
+      let(:payment_2) { Spree::Payment.new(:amount => 75) }
 
-      it 'raises an exception' do
-        expect{ order.refund!(100) }.to raise_exception(Spree::IllegalOperation)
+      let(:order) { Spree::Order.new(:total => 100, :payments => [payment_1, payment_2]) }
+
+      context 'and the amount is less than the first payment' do
+        before { order.refund! 20 }
+
+        it 'includes the first payment' do
+          expect(order.refunds.first.payments).to include(payment_1)
+        end
+
+        it 'does not include the second payment' do
+          expect(order.refunds.first.payments).not_to include(payment_2)
+        end
       end
+
+      context 'and the amount is equal to the first payment' do
+        before { order.refund! 25 }
+
+        it 'includes the first payment' do
+          expect(order.refunds.first.payments).to include(payment_1)
+        end
+
+        it 'does not include the second payment' do
+          expect(order.refunds.first.payments).not_to include(payment_2)
+        end
+      end
+
+      context 'and the amount exceeds the first payment' do
+        before { order.refund! 60 }
+
+        it 'includes the first payment' do
+          expect(order.refunds.first.payments).to include(payment_1)
+        end
+
+        it 'includes the second payment' do
+          expect(order.refunds.first.payments).to include(payment_2)
+        end
+      end
+
     end
 
   end
@@ -266,6 +279,20 @@ describe Spree::Order do
 
     it 'sets created_at attribute' do
       expect(order.created_at).to be()
+    end
+  end
+
+  describe '#refunds=' do
+    it 'raises an exception' do
+      expect{ order.refunds = [] }.to raise_exception
+    end
+  end
+
+  context 'when not yet saved' do
+    describe '#refund!' do
+      it 'raises an exception' do
+        expect{ order.refund! }.to raise_exception(Spree::IllegalOperation)
+      end
     end
   end
 

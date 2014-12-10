@@ -72,13 +72,22 @@ module Spree
       self.voided = true
     end
 
-    def refund!(amount, credit=false)
+    def refund!(amount=nil)
+      amount ||= self.total
+      raise Spree::IllegalOperation.new('Cannot refund an unsaved order') if !persisted?
       raise Spree::IllegalOperation.new('Cannot refund an unpaid order') if !paid?
       raise Spree::IllegalOperation.new('Cannot refund an amount greater than total') if amount > self.total
 
-      self.payments.each do |payment|
+      payment_total = 0
+      refund = Spree::Refund.new(:amount => amount)
 
+      self.payments.each do |payment|
+        refund.payments << payment
+        payment_total += payment.amount
+        break if payment_total >= amount
       end
+
+      self.refunds << refund
     end
 
     def save!
@@ -130,6 +139,10 @@ module Spree
 
     def persisted?
       self.created_at || false
+    end
+
+    # Do not allow direct access to refunds collection (must use refund! instead)
+    def refunds=
     end
 
   end
