@@ -108,7 +108,7 @@ module Spree
       self.created_at || false
     end
 
-    # Deletes or updates an [Item] based upon the variant and quantity.
+    # Find the [Variant] based on the sku in the items currently in the cart.
     #
     # @param variant [Variant] the variant the item is based upon.
     def find_item_by_variant(variant)
