@@ -19,18 +19,10 @@ module Spree
       # TODO - potentially do something with the payment method, etc. (like void the payment on gateway)
     end
 
-    def canceled?
-      self.canceled
-    end
-
     def refund!(amount=nil)
       raise Spree::IllegalOperation.new('Cannot refund a canceled payment') if self.canceled
       raise Spree::IllegalOperation.new('Cannot refund a canceled payment') if self.refunded
 
-    end
-
-    def refunded?
-      self.refunded
     end
 
     def pay!

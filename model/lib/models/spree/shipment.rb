@@ -8,9 +8,5 @@ module Spree
       self.shipped = true
       # TODO - potentially do something with the payment method, etc. (like void the payment on gateway)
     end
-
-    def shipped?
-      self.shipped
-    end
   end
 end

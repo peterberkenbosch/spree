@@ -38,18 +38,6 @@ module Spree
       end
     end
 
-    def canceled?
-      self.canceled
-    end
-
-    def fulfilled?
-      self.fulfilled
-    end
-
-    def shippped?
-      self.shipped
-    end
-
     def ship!
       raise Spree::IllegalOperation.new('Cannot ship an order unless it has been paid') if !paid?
       raise Spree::IllegalOperation.new('Cannot ship an order that has been shipped') if shipped?
@@ -57,10 +45,6 @@ module Spree
       self.shipped = true
 
       shipments.each { |shipment| shipment.ship! }
-    end
-
-    def voided?
-      self.voided
     end
 
     def void!
