@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Payment do
-  let(:payment) { Spree::Payment.new }
+  let(:payment) { Spree::Payment.new(amount: 100) }
 
   describe '#cancel!' do
     context 'when unpaid' do
@@ -40,16 +40,62 @@ describe Spree::Payment do
   end
 
   describe '#refund!' do
+    context 'when paritally refunded' do
+      before { payment.partially_refunded = true }
+
+      context 'and amount is greater than refund balance' do
+        before { payment.refund_balance = 25 }
+
+        it 'raises an exception' do
+          expect{ payment.refund! 50 }.to raise_exception(Spree::IllegalOperation)
+        end
+      end
+
+      context 'and amount is less than refund balance' do
+        before do
+          payment.refund_balance = 75
+          payment.refund! 40
+        end
+
+        it 'reduces the refund balance by the amount' do
+          expect(payment.refund_balance).to eq(35)
+        end
+      end
+    end
+
     context 'when paid' do
       before { payment.paid = true }
 
-      it 'does stuff'
-    end
+      context 'but amount is greater than payment' do
+        it 'raises an exception' do
+          expect{ payment.refund! 125 }.to raise_exception(Spree::IllegalOperation)
+        end
+      end
 
-    context 'when partially refunded' do
-      before { payment.partially_refunded = true }
+      context 'and no amount is specified' do
+        before { payment.refund! }
 
-      it 'does stuff'
+        it 'refunds the entire payment' do
+          expect(payment.refunded).to eq(true)
+        end
+
+        it 'has no refund balance' do
+          expect(payment.refund_balance).to eq(0)
+        end
+      end
+
+      context 'and amount is less than payment' do
+
+        before { payment.refund! 25 }
+
+        it 'partially refunds the payment' do
+          expect(payment.partially_refunded).to eq(true)
+        end
+
+        it 'allocates the rest to refund_balance' do
+          expect(payment.refund_balance).to eq(75)
+        end
+      end
     end
 
     context 'when canceled' do
