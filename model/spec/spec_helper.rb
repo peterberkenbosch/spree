@@ -17,8 +17,6 @@ require 'spree_model'
 # require testing support
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
 
-require 'testing_support/spree/samples/order_sample.rb'
-
 RSpec.configure do |config|
   config.color = true
   config.mock_with :rspec
