@@ -64,10 +64,17 @@ module Spree
     describe '#remove_item' do
       it "deletes item from cart" do
         tshirt = Variant.new price: 5, sku: 'tshirt'
-        subject.add_item tshirt
+        subject.add_item tshirt, 2
         subject.remove_item tshirt
 
-        expect(subject.items.count).to eq 0
+        expect(subject.item_total).to eq 5
+        expect(subject.items.count).to eq 1
+        expect(subject.items.first.quantity).to eq 1
+
+        subject.remove_item tshirt
+
+        expect(subject.item_total).to eq 0
+        expect(subject.items.count).to eq 0    
       end
 
       it "should raise ArgumentError for variant argument that's not Variant" do

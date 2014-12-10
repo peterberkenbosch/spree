@@ -81,9 +81,15 @@ module Spree
     def remove_item(variant, quantity = 1, options = {})
       raise ArgumentError unless variant.is_a?(Variant)
 
-      item = find_item_by_variant(variant)
+      if item = find_item_by_variant(variant)
+        item.quantity -= quantity.to_i
 
-      self.items.delete item
+        if item.quantity <= 0
+          self.items.delete item
+        end
+      end
+
+      self.item_total = self.items.map(&:amount).reduce 0, :+
       self.items
     end
 
