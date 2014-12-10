@@ -32,6 +32,8 @@ module Spree
     # @param options [Hash]
     # @return an array of the carts [Item]'s.
     def add_item(variant, quantity = 1, options = {})
+      raise ArgumentError unless variant.is_a?(Variant)
+
       if item = find_item_by_variant(variant)
         item.quantity += quantity.to_i
       else
@@ -48,6 +50,7 @@ module Spree
     # @param promotion [Promotion] adds promotion to be applied to the cart's order.
     # @return an array of the carts [Promotion]'s.
     def add_promotion(promotion)
+      raise ArgumentError unless promotion.is_a?(Promotion)
       self.promotions.push promotion
     end
 
@@ -76,6 +79,8 @@ module Spree
     # @param options [Hash]
     # @return an array of the carts [Item]'s.
     def remove_item(variant, quantity = 1, options = {})
+      raise ArgumentError unless variant.is_a?(Variant)
+
       item = find_item_by_variant(variant)
 
       self.items.delete item
@@ -87,6 +92,7 @@ module Spree
     # @param promotion [Promotion] removes promotion to not be applied to the cart's order.
     # @return an array of the carts [Promotion]'s.
     def remove_promotion(promotion)
+      raise ArgumentError unless promotion.is_a?(Promotion)
       self.promotions.delete promotion
     end
 
