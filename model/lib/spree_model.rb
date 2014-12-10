@@ -24,8 +24,5 @@ Virtus.finalize
 require 'exceptions/spree/attribute_locked'
 require 'exceptions/spree/illegal_operation'
 
-# require testing_support
-require 'testing_support/spree/samples/order_sample.rb'
-
 # Remove annoying deprecation message
 I18n.enforce_available_locales = false

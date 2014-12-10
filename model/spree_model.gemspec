@@ -16,13 +16,15 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://spreecommerce.com'
   s.license     = %q{BSD-3}
 
-  s.files        = Dir['LICENSE', 'README.md', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'vendor/**/*']
+  s.files        = `git ls-files`.split("\n")
+  s.test_files   = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_path = 'lib'
 
-  s.add_dependency 'virtus', '~> 1.0.3'
-  s.add_dependency 'inflecto', '~> 0.0.2'
   s.add_dependency 'activemodel', '~> 4.1.0'
+  s.add_dependency 'inflecto', '~> 0.0.2'
+  s.add_dependency 'virtus', '~> 1.0.3'
 
-  s.add_development_dependency 'rspec'
   s.add_development_dependency 'pry'
+  s.add_development_dependency 'rspec'
+  s.add_development_dependency 'simplecov'
 end
