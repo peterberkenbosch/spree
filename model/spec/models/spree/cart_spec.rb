@@ -2,30 +2,35 @@ require 'spec_helper'
 
 module Spree
   describe Cart do
-    it "adds item to cart" do
-      tshirt = Variant.new price: 5, sku: 'tshirt'
-      subject.add_item tshirt
+    describe '#add_item'
+      it "adds item to cart" do
+        tshirt = Variant.new price: 5, sku: 'tshirt'
+        subject.add_item tshirt
 
-      expect(subject.items.count).to eq 1
-      expect(subject.item_total).to eq 5
+        expect(subject.items.count).to eq 1
+        expect(subject.item_total).to eq 5
+      end
+
+      it "adds item already in cart again" do
+        tshirt = Variant.new price: 5, sku: 'tshirt'
+        subject.add_item tshirt
+        subject.add_item tshirt
+
+        expect(subject.items.count).to eq 1
+        expect(subject.item_total).to eq 10
+      end
     end
 
-    it "adds item already in cart again" do
-      tshirt = Variant.new price: 5, sku: 'tshirt'
-      subject.add_item tshirt
-      subject.add_item tshirt
-
-      expect(subject.items.count).to eq 1
-      expect(subject.item_total).to eq 10
-    end
-
-    it "empty" do
+    it "empty!" do
       tshirt = Variant.new price: 5, sku: 'tshirt'
       subject.add_item tshirt
 
-      subject.empty
+      subject.empty!
       expect(subject.items.count).to eq 0
       expect(subject.item_total).to eq 0
+      expect(subject.order_total).to eq 0
+      expect(subject.shipping_total).to eq 0
+      expect(subject.tax_total).to eq 0
     end
 
     it "deletes item from cart" do
