@@ -27,7 +27,7 @@ module Spree
     # either)
     #
     # @param variant [Variant] the variant the item is based upon.
-    # @param quantity [Variant] the quantity to add of the item.
+    # @param quantity [Integer] the quantity to add of the item.
     # @param options [Hash]
     # @return an array of the carts [Item]'s.
     def add_item(variant, quantity = 1, options = {})
@@ -74,7 +74,7 @@ module Spree
     # Deletes or updates an [Item] based upon the variant and quantity.
     #
     # @param variant [Variant] the variant the item is based upon.
-    # @param quantity [Variant] the quantity to remove of the item.
+    # @param quantity [Integer] the quantity to remove of the item.
     # @param options [Hash]
     # @return an array of the carts [Item]'s.
     def remove_item(variant, quantity = 1, options = {})
