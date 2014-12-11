@@ -31,11 +31,13 @@ describe Spree::Order do
     end
   end
 
-  describe '#ship' do
+  describe '#ship on saved order' do
+    before { order.save }
+
     context 'when order is not yet paid' do
       let(:order) { Spree::Order.new(:paid => false, :shipments => [shipment]) }
 
-      it 'raises' do
+      it 'raises an exception' do
         expect{ order.ship }.to raise_exception(Spree::IllegalOperation)
       end
     end
@@ -62,7 +64,9 @@ describe Spree::Order do
     end
   end
 
-  describe '#void' do
+  describe '#void on saved order' do
+    before { order.save }
+
     context 'when order is not yet paid' do
       let(:order) { Spree::Order.new(:paid => false, :shipments => [shipment]) }
 
@@ -114,7 +118,8 @@ describe Spree::Order do
     end
   end
 
-  describe '#credit' do
+  describe '#credit on saved order' do
+    before { order.save }
 
     # context 'when store credit is requested' do
     #   before { order.refund(100, true) }
@@ -223,7 +228,8 @@ describe Spree::Order do
 
   end
 
-  describe '#cancel' do
+  describe '#cancel on saved order' do
+    before { order.save }
 
     context 'when order is not yet paid' do
       let(:order) { Spree::Order.new(:paid => false, :customer => customer, :payments => [payment]) }
@@ -288,14 +294,6 @@ describe Spree::Order do
     end
   end
 
-  context 'when not yet saved' do
-    describe '#refund' do
-      it 'raises an exception' do
-        expect{ order.refund }.to raise_exception(Spree::IllegalOperation)
-      end
-    end
-  end
-
   context 'when saved' do
     before { order.save }
 
@@ -347,6 +345,32 @@ describe Spree::Order do
       end
     end
 
+  end
+
+  context 'when unsaved' do
+    describe '#void' do
+      it 'raises an exception' do
+        expect{ order.void }.to raise_exception(Spree::IllegalOperation)
+      end
+    end
+
+    describe '#credit' do
+      it 'raises an exception' do
+        expect{ order.credit }.to raise_exception(Spree::IllegalOperation)
+      end
+    end
+
+    describe '#refund' do
+      it 'raises an exception' do
+        expect{ order.refund }.to raise_exception(Spree::IllegalOperation)
+      end
+    end
+
+    describe '#ship' do
+      it 'raises an exception' do
+        expect{ order.ship }.to raise_exception(Spree::IllegalOperation)
+      end
+    end
   end
 
 end

@@ -37,6 +37,8 @@ module Spree
     end
 
     def ship
+      require_save 'ship'
+
       block_states('ship', %w(shipped))
       require_states('ship', %w(paid))
 
@@ -45,14 +47,19 @@ module Spree
     end
 
     def void
+      require_save 'void'
       block_states('void', %w(fulfilled shipped canceled voided))
       self.voided = true
+    end
+
+    def credit
+      require_save 'credit'
     end
 
     def refund(amount=nil)
       amount ||= self.total
       require_states('refund', %w(paid))
-      raise Spree::IllegalOperation.new('Cannot refund an unsaved order') if !persisted?
+      raise Spree::IllegalOperation.new('Cannot refund an unsaved order') if !saved?
       raise Spree::IllegalOperation.new('Cannot refund an amount greater than total') if amount > self.total
 
       payment_total = 0
@@ -73,49 +80,53 @@ module Spree
     end
 
     def payments=(payments)
-      raise Spree::AttributeLocked.new('Payments cannot be changed on a saved instance') if persisted?
+      raise Spree::AttributeLocked.new('Payments cannot be changed on a saved instance') if saved?
       super payments
     end
 
     def items=(items)
-      raise Spree::AttributeLocked.new('Items cannot be changed on a saved instance') if persisted?
+      raise Spree::AttributeLocked.new('Items cannot be changed on a saved instance') if saved?
       super items
     end
 
     def customer=(customer)
-      raise Spree::AttributeLocked.new('Customer cannot be changed on a saved instance') if persisted?
+      raise Spree::AttributeLocked.new('Customer cannot be changed on a saved instance') if saved?
       super customer
     end
 
     def number=(number)
-      raise Spree::AttributeLocked.new('Number cannot be changed on a saved instance') if persisted?
+      raise Spree::AttributeLocked.new('Number cannot be changed on a saved instance') if saved?
       super number
     end
 
     def total=(total)
-      raise Spree::AttributeLocked.new('Total cannot be changed on a saved instance') if persisted?
+      raise Spree::AttributeLocked.new('Total cannot be changed on a saved instance') if saved?
       super total
     end
 
     def item_total=(total)
-      raise Spree::AttributeLocked.new('Item total cannot be changed on a saved instance') if persisted?
+      raise Spree::AttributeLocked.new('Item total cannot be changed on a saved instance') if saved?
       super total
     end
 
     def shipping_total=(total)
-      raise Spree::AttributeLocked.new('Shipping total cannot be changed on a saved instance') if persisted?
+      raise Spree::AttributeLocked.new('Shipping total cannot be changed on a saved instance') if saved?
       super total
     end
 
     def tax_total=(total)
-      raise Spree::AttributeLocked.new('Tax total cannot be changed on a saved instance') if persisted?
+      raise Spree::AttributeLocked.new('Tax total cannot be changed on a saved instance') if saved?
       super total
+    end
+
+    def saved?
+      self.created_at || false
     end
 
     private
 
-    def persisted?
-      self.created_at || false
+    def require_save(action)
+      raise Spree::IllegalOperation.new("Cannot perform #{action} until order is saved") if !saved?
     end
 
     # Do not allow direct access to refunds collection (must use refund instead)
