@@ -24,7 +24,15 @@ module Spree
       block_states('process', %w(canceled processed))
       require_states('process', ['approved'])
 
-      payments.each { |payment| payment.refund(payment.amount) }
+      refund_total = 0
+
+      payments.each do |payment|
+        amount = [payment.amount, (self.amount - refund_total)].min
+        payment.refund(amount)
+
+        refund_total += amount
+      end
+
       self.processed = true
     end
 
