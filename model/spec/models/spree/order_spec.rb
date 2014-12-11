@@ -31,12 +31,12 @@ describe Spree::Order do
     end
   end
 
-  describe '#ship!' do
+  describe '#ship' do
     context 'when order is not yet paid' do
       let(:order) { Spree::Order.new(:paid => false, :shipments => [shipment]) }
 
       it 'raises' do
-        expect{ order.ship! }.to raise_exception(Spree::IllegalOperation)
+        expect{ order.ship }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
@@ -44,13 +44,13 @@ describe Spree::Order do
       let(:order) { Spree::Order.new(:shipped => true) }
 
       it 'raises' do
-        expect{ order.ship! }.to raise_exception(Spree::IllegalOperation)
+        expect{ order.ship }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
     context 'when order is paid' do
       let(:order) { Spree::Order.new(:paid => true, :shipments => [shipment]) }
-      before { order.ship! }
+      before { order.ship }
 
       it 'changes the state to shipped' do
         expect(order.shipped?).to eq(true)
@@ -62,11 +62,11 @@ describe Spree::Order do
     end
   end
 
-  describe '#void!' do
+  describe '#void' do
     context 'when order is not yet paid' do
       let(:order) { Spree::Order.new(:paid => false, :shipments => [shipment]) }
 
-      before { order.void! }
+      before { order.void }
       it 'changes the state to voided' do
         expect(order.voided?).to eq(true)
       end
@@ -76,7 +76,7 @@ describe Spree::Order do
       let(:order) { Spree::Order.new(:canceled => true) }
 
       it 'raises' do
-        expect{ order.void! }.to raise_exception(Spree::IllegalOperation)
+        expect{ order.void }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
@@ -84,7 +84,7 @@ describe Spree::Order do
       let(:order) { Spree::Order.new(:shipped => true) }
 
       it 'raises' do
-        expect{ order.void! }.to raise_exception(Spree::IllegalOperation)
+        expect{ order.void }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
@@ -92,7 +92,7 @@ describe Spree::Order do
       let(:order) { Spree::Order.new(:voided => true) }
 
       it 'raises' do
-        expect{ order.void! }.to raise_exception(Spree::IllegalOperation)
+        expect{ order.void }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
@@ -100,13 +100,13 @@ describe Spree::Order do
       let(:order) { Spree::Order.new(:fulfilled => true) }
 
       it 'raises' do
-        expect{ order.void! }.to raise_exception(Spree::IllegalOperation)
+        expect{ order.void }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
     context 'when order is paid' do
       let(:order) { Spree::Order.new(:paid => true) }
-      before { order.void! }
+      before { order.void }
 
       it 'changes the state to voided' do
         expect(order.voided?).to eq(true)
@@ -114,10 +114,10 @@ describe Spree::Order do
     end
   end
 
-  describe '#credit!' do
+  describe '#credit' do
 
     # context 'when store credit is requested' do
-    #   before { order.refund!(100, true) }
+    #   before { order.refund(100, true) }
 
     #   it 'creates a store credit equal to the total' do
     #     expects(order.credits.first.amount).to eq(100)
@@ -134,21 +134,21 @@ describe Spree::Order do
 
   end
 
-  describe '#refund! on saved order' do
+  describe '#refund on saved order' do
     let(:payment) { Spree::Payment.new(:amount => 100) }
     subject(:order) { Spree::Order.new(:total => 100, :payments => [payment]) }
-    before { order.save! }
+    before { order.save }
 
     context 'when order has not been paid' do
       before { order.paid = false }
 
       it 'raises an exception' do
-        expect{ order.refund!(100) }.to raise_exception(Spree::IllegalOperation)
+        expect{ order.refund(100) }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
     context 'when no amount is specified' do
-      before { order.refund! }
+      before { order.refund }
 
       it 'refunds the total' do
         expect(order.refunds.first.amount).to eq(100)
@@ -156,7 +156,7 @@ describe Spree::Order do
     end
 
     context 'when an amount less than total is specified' do
-      before { order.refund!(75) }
+      before { order.refund(75) }
 
       it 'refunds the partial amount' do
         expect(order.refunds.first.amount).to eq(75)
@@ -164,7 +164,7 @@ describe Spree::Order do
     end
 
     context 'when an amount equal to the total is specified' do
-      before { order.refund!(100) }
+      before { order.refund(100) }
 
       it 'refunds the partial amount' do
         expect(order.refunds.first.amount).to eq(100)
@@ -173,7 +173,7 @@ describe Spree::Order do
 
     context 'when an amount greater than the total is specified' do
       it 'raises an exception' do
-        expect{ order.refund!(125) }.to raise_exception(Spree::IllegalOperation)
+        expect{ order.refund(125) }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
@@ -184,7 +184,7 @@ describe Spree::Order do
       let(:order) { Spree::Order.new(:total => 100, :payments => [payment_1, payment_2]) }
 
       context 'and the amount is less than the first payment' do
-        before { order.refund! 20 }
+        before { order.refund 20 }
 
         it 'includes the first payment' do
           expect(order.refunds.first.payments).to include(payment_1)
@@ -196,7 +196,7 @@ describe Spree::Order do
       end
 
       context 'and the amount is equal to the first payment' do
-        before { order.refund! 25 }
+        before { order.refund 25 }
 
         it 'includes the first payment' do
           expect(order.refunds.first.payments).to include(payment_1)
@@ -208,7 +208,7 @@ describe Spree::Order do
       end
 
       context 'and the amount exceeds the first payment' do
-        before { order.refund! 60 }
+        before { order.refund 60 }
 
         it 'includes the first payment' do
           expect(order.refunds.first.payments).to include(payment_1)
@@ -223,11 +223,11 @@ describe Spree::Order do
 
   end
 
-  describe '#cancel!' do
+  describe '#cancel' do
 
     context 'when order is not yet paid' do
       let(:order) { Spree::Order.new(:paid => false, :customer => customer, :payments => [payment]) }
-      before { order.cancel! }
+      before { order.cancel }
 
       it 'should not create any refunds' do
         expect(order.refunds.size).to eq(0)
@@ -245,7 +245,7 @@ describe Spree::Order do
 
     context 'when order is paid' do
       let(:order) { Spree::Order.new(:paid => true, :total => 100, :customer => customer, :payments => [payment]) }
-      before { order.cancel! }
+      before { order.cancel }
 
       it 'changes the state to canceled' do
         expect(order.canceled?).to eq(true)
@@ -260,7 +260,7 @@ describe Spree::Order do
       before { order.fulfilled = true}
 
       it 'raises' do
-        expect{ order.cancel! }.to raise_exception(Spree::IllegalOperation)
+        expect{ order.cancel }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
@@ -268,14 +268,14 @@ describe Spree::Order do
       before { order.shipped = true}
 
       it 'raises' do
-        expect{ order.cancel! }.to raise_exception(Spree::IllegalOperation)
+        expect{ order.cancel }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
   end
 
   describe "#save" do
-    before { order.save! }
+    before { order.save }
 
     it 'sets created_at attribute' do
       expect(order.created_at).to be()
@@ -289,15 +289,15 @@ describe Spree::Order do
   end
 
   context 'when not yet saved' do
-    describe '#refund!' do
+    describe '#refund' do
       it 'raises an exception' do
-        expect{ order.refund! }.to raise_exception(Spree::IllegalOperation)
+        expect{ order.refund }.to raise_exception(Spree::IllegalOperation)
       end
     end
   end
 
   context 'when saved' do
-    before { order.save! }
+    before { order.save }
 
     describe 'setting payments' do
       it 'raises an exeption' do

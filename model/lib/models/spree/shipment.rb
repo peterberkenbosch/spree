@@ -4,7 +4,7 @@ module Spree
 
     attribute :shipped, Boolean, :default => false
 
-    def ship!
+    def ship
       self.shipped = true
       # TODO - potentially do something with the payment method, etc. (like void the payment on gateway)
     end

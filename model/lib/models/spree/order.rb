@@ -25,33 +25,33 @@ module Spree
 
     validates_presence_of :number
 
-    def cancel!
-      block_states('cancel!', %w(fulfilled shipped))
+    def cancel
+      block_states('cancel', %w(fulfilled shipped))
       self.canceled = true
 
       if !self.paid?
         payments.each do |payment|
-          payment.cancel!
+          payment.cancel
         end
       end
     end
 
-    def ship!
-      block_states('ship!', %w(shipped))
-      require_states('ship!', %w(paid))
+    def ship
+      block_states('ship', %w(shipped))
+      require_states('ship', %w(paid))
 
       self.shipped = true
-      shipments.each { |shipment| shipment.ship! }
+      shipments.each { |shipment| shipment.ship }
     end
 
-    def void!
-      block_states('void!', %w(fulfilled shipped canceled voided))
+    def void
+      block_states('void', %w(fulfilled shipped canceled voided))
       self.voided = true
     end
 
-    def refund!(amount=nil)
+    def refund(amount=nil)
       amount ||= self.total
-      require_states('refund!', %w(paid))
+      require_states('refund', %w(paid))
       raise Spree::IllegalOperation.new('Cannot refund an unsaved order') if !persisted?
       raise Spree::IllegalOperation.new('Cannot refund an amount greater than total') if amount > self.total
 
@@ -67,7 +67,7 @@ module Spree
       self.refunds << refund
     end
 
-    def save!
+    def save
       self.created_at = Time.now
       # TODO: return serialized JSON
     end
@@ -118,7 +118,7 @@ module Spree
       self.created_at || false
     end
 
-    # Do not allow direct access to refunds collection (must use refund! instead)
+    # Do not allow direct access to refunds collection (must use refund instead)
     def refunds=
     end
 

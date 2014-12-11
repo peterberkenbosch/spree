@@ -3,10 +3,10 @@ require 'spec_helper'
 describe Spree::Payment do
   let(:payment) { Spree::Payment.new(amount: 100) }
 
-  describe '#cancel!' do
+  describe '#cancel' do
     context 'when unpaid' do
       subject(:payment) { Spree::Payment.new(:paid => false) }
-      before { payment.cancel! }
+      before { payment.cancel }
 
       it 'changes the state to canceled' do
         expect(payment.canceled?).to eq(true)
@@ -17,7 +17,7 @@ describe Spree::Payment do
       before { payment.paid = true }
 
       it 'raises an exception' do
-        expect{ payment.cancel! }.to raise_exception(Spree::IllegalOperation)
+        expect{ payment.cancel }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
@@ -25,7 +25,7 @@ describe Spree::Payment do
       before { payment.refunded = true }
 
       it 'raises an exception' do
-        expect{ payment.cancel! }.to raise_exception(Spree::IllegalOperation)
+        expect{ payment.cancel }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
@@ -33,13 +33,13 @@ describe Spree::Payment do
       before { payment.partially_refunded = true }
 
       it 'raises an exception' do
-        expect{ payment.cancel! }.to raise_exception(Spree::IllegalOperation)
+        expect{ payment.cancel }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
   end
 
-  describe '#refund!' do
+  describe '#refund' do
     context 'when paritally refunded' do
       before { payment.partially_refunded = true }
 
@@ -47,14 +47,14 @@ describe Spree::Payment do
         before { payment.refund_balance = 25 }
 
         it 'raises an exception' do
-          expect{ payment.refund! 50 }.to raise_exception(Spree::IllegalOperation)
+          expect{ payment.refund 50 }.to raise_exception(Spree::IllegalOperation)
         end
       end
 
       context 'and amount is less than refund balance' do
         before do
           payment.refund_balance = 75
-          payment.refund! 40
+          payment.refund 40
         end
 
         it 'reduces the refund balance by the amount' do
@@ -68,12 +68,12 @@ describe Spree::Payment do
 
       context 'but amount is greater than payment' do
         it 'raises an exception' do
-          expect{ payment.refund! 125 }.to raise_exception(Spree::IllegalOperation)
+          expect{ payment.refund 125 }.to raise_exception(Spree::IllegalOperation)
         end
       end
 
       context 'and no amount is specified' do
-        before { payment.refund! }
+        before { payment.refund }
 
         it 'refunds the entire payment' do
           expect(payment.refunded).to eq(true)
@@ -86,7 +86,7 @@ describe Spree::Payment do
 
       context 'and amount is less than payment' do
 
-        before { payment.refund! 25 }
+        before { payment.refund 25 }
 
         it 'partially refunds the payment' do
           expect(payment.partially_refunded).to eq(true)
@@ -102,7 +102,7 @@ describe Spree::Payment do
       before { payment.canceled = true}
 
       it 'raises an exception' do
-        expect{ payment.refund! }.to raise_exception(Spree::IllegalOperation)
+        expect{ payment.refund }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
@@ -110,16 +110,16 @@ describe Spree::Payment do
       before { payment.refunded = true}
 
       it 'raises an exception' do
-        expect{ payment.refund! }.to raise_exception(Spree::IllegalOperation)
+        expect{ payment.refund }.to raise_exception(Spree::IllegalOperation)
       end
     end
   end
 
-  describe '#pay!' do
+  describe '#pay' do
     context 'when unpaid' do
       let(:payment_method) { Spree::PaymentMethod.new }
       subject(:payment) { Spree::Payment.new(paid: false, payment_method: payment_method) }
-      before { payment.pay! }
+      before { payment.pay }
 
       it 'sets the state to paid' do
         expect(payment.paid).to eq(true)
@@ -132,7 +132,7 @@ describe Spree::Payment do
       before { payment.paid = true }
 
       it 'raises an exception' do
-        expect{ payment.pay! }.to raise_exception(Spree::IllegalOperation)
+        expect{ payment.pay }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
@@ -140,7 +140,7 @@ describe Spree::Payment do
       before { payment.canceled = true}
 
       it 'raises an exception' do
-        expect{ payment.pay! }.to raise_exception(Spree::IllegalOperation)
+        expect{ payment.pay }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
@@ -148,7 +148,7 @@ describe Spree::Payment do
       before { payment.refunded = true}
 
       it 'raises an exception' do
-        expect{ payment.pay! }.to raise_exception(Spree::IllegalOperation)
+        expect{ payment.pay }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
@@ -156,7 +156,7 @@ describe Spree::Payment do
       before { payment.partially_refunded = true}
 
       it 'raises an exception' do
-        expect{ payment.pay! }.to raise_exception(Spree::IllegalOperation)
+        expect{ payment.pay }.to raise_exception(Spree::IllegalOperation)
       end
     end
   end

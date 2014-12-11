@@ -10,14 +10,14 @@ module Spree
     attribute :amount, Float
     attribute :refund_balance, Float, :default => 0
 
-    def cancel!
-      block_states('cancel!', %w(refunded canceled paid partially_refunded))
+    def cancel
+      block_states('cancel', %w(refunded canceled paid partially_refunded))
       self.canceled = true
       # TODO - do something with the payment method, etc. (like void the payment on gateway)
     end
 
-    def refund!(amount=nil)
-      block_states('refund!', %w(canceled refunded))
+    def refund(amount=nil)
+      block_states('refund', %w(canceled refunded))
 
       if amount == nil
         self.refunded = true
@@ -34,8 +34,8 @@ module Spree
       end
     end
 
-    def pay!
-      block_states('pay!', %w(refunded canceled paid partially_refunded))
+    def pay
+      block_states('pay', %w(refunded canceled paid partially_refunded))
       self.paid = true
     end
 
