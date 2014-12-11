@@ -72,8 +72,8 @@ describe Spree::Payment do
         end
       end
 
-      context 'and no amount is specified' do
-        before { payment.refund }
+      context 'and amount is equal to payment' do
+        before { payment.refund 100 }
 
         it 'refunds the entire payment' do
           expect(payment.refunded).to eq(true)
@@ -102,7 +102,7 @@ describe Spree::Payment do
       before { payment.canceled = true}
 
       it 'raises an exception' do
-        expect{ payment.refund }.to raise_exception(Spree::IllegalOperation)
+        expect{ payment.refund 100 }.to raise_exception(Spree::IllegalOperation)
       end
     end
 
@@ -110,7 +110,7 @@ describe Spree::Payment do
       before { payment.refunded = true}
 
       it 'raises an exception' do
-        expect{ payment.refund }.to raise_exception(Spree::IllegalOperation)
+        expect{ payment.refund 100 }.to raise_exception(Spree::IllegalOperation)
       end
     end
   end

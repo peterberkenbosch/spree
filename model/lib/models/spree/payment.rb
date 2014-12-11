@@ -16,10 +16,10 @@ module Spree
       # TODO - do something with the payment method, etc. (like void the payment on gateway)
     end
 
-    def refund(amount=nil)
+    def refund(amount)
       block_states('refund', %w(canceled refunded))
 
-      if amount == nil
+      if amount == self.amount
         self.refunded = true
       else
         raise Spree::IllegalOperation.new('Cannot refund more than payment amount') if amount > self.amount

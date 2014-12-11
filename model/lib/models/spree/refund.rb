@@ -24,7 +24,7 @@ module Spree
       block_states('process', %w(canceled processed))
       require_states('process', ['approved'])
 
-      payments.each { |payment| payment.refund }
+      payments.each { |payment| payment.refund(payment.amount) }
       self.processed = true
     end
 

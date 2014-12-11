@@ -90,19 +90,24 @@ describe Spree::Refund do
     before { refund.approved = true }
 
     describe 'process' do
-      before { refund.process }
-
       it 'changes the state to processed' do
+        refund.process
         expect(refund.processed?).to eq(true)
       end
 
       it 'refunds the entire payment' do
-        expect(payment.refunded?).to eq(true)
+        expect(payment).to receive(:refund).with(100)
+        refund.process
       end
     end
 
     context 'and amount is less than payment' do
-      it 'does stuff'
+      subject(:refund) { Spree::Refund.new(amount: 75, payments: [payment]) }
+
+      it 'refunds a portion of the payment' do
+        expect(payment).to receive(:refund).with(75)
+        refund.process
+      end
     end
 
     context 'and there are two payments' do
