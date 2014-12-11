@@ -12,12 +12,12 @@ module Spree
     attribute :shipments, Array['Spree::Shipment']
     attribute :refunds, Array['Spree::Refund']
     attribute :credits, Array['Spree::Credit']
-    attribute :canceled, Boolean, :default => false
-    attribute :paid, Boolean, :default => true
-    attribute :fulfilled, Boolean, :default => false
-    attribute :shipped, Boolean, :default => false
-    attribute :shipped, Boolean, :default => false
-    attribute :voided, Boolean, :default => false
+    attribute :canceled, Boolean, default: false
+    attribute :paid, Boolean, default: true
+    attribute :fulfilled, Boolean, default: false
+    attribute :shipped, Boolean, default: false
+    attribute :shipped, Boolean, default: false
+    attribute :voided, Boolean, default: false
     attribute :total, Float, default: 0
     attribute :item_total, Float, default: 0
     attribute :tax_total, Float, default: 0

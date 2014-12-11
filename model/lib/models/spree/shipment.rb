@@ -2,7 +2,7 @@ module Spree
   class Shipment < Spree::ModelBase
     include Virtus.model(finalize: false)
 
-    attribute :shipped, Boolean, :default => false
+    attribute :shipped, Boolean, default: false
 
     def ship
       self.shipped = true

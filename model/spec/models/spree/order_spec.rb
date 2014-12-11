@@ -35,7 +35,7 @@ describe Spree::Order do
     before { order.save }
 
     context 'when order is not yet paid' do
-      let(:order) { Spree::Order.new(:paid => false, :shipments => [shipment]) }
+      let(:order) { Spree::Order.new(paid: false, shipments: [shipment]) }
 
       it 'raises an exception' do
         expect{ order.ship }.to raise_exception(Spree::IllegalOperation)
@@ -43,7 +43,7 @@ describe Spree::Order do
     end
 
     context 'when order is shipped' do
-      let(:order) { Spree::Order.new(:shipped => true) }
+      let(:order) { Spree::Order.new(shipped: true) }
 
       it 'raises' do
         expect{ order.ship }.to raise_exception(Spree::IllegalOperation)
@@ -51,7 +51,7 @@ describe Spree::Order do
     end
 
     context 'when order is paid' do
-      let(:order) { Spree::Order.new(:paid => true, :shipments => [shipment]) }
+      let(:order) { Spree::Order.new(paid: true, shipments: [shipment]) }
 
       it 'changes the state to shipped' do
         order.ship
@@ -74,7 +74,7 @@ describe Spree::Order do
     before { order.save }
 
     context 'when order is not yet paid' do
-      let(:order) { Spree::Order.new(:paid => false, :shipments => [shipment]) }
+      let(:order) { Spree::Order.new(paid: false, shipments: [shipment]) }
 
       it 'changes the state to voided' do
         order.void
@@ -88,7 +88,7 @@ describe Spree::Order do
     end
 
     context 'when order is canceled' do
-      let(:order) { Spree::Order.new(:canceled => true) }
+      let(:order) { Spree::Order.new(canceled: true) }
 
       it 'raises' do
         expect{ order.void }.to raise_exception(Spree::IllegalOperation)
@@ -96,7 +96,7 @@ describe Spree::Order do
     end
 
     context 'when order is shipped' do
-      let(:order) { Spree::Order.new(:shipped => true) }
+      let(:order) { Spree::Order.new(shipped: true) }
 
       it 'raises' do
         expect{ order.void }.to raise_exception(Spree::IllegalOperation)
@@ -104,7 +104,7 @@ describe Spree::Order do
     end
 
     context 'when order is voided' do
-      let(:order) { Spree::Order.new(:voided => true) }
+      let(:order) { Spree::Order.new(voided: true) }
 
       it 'raises' do
         expect{ order.void }.to raise_exception(Spree::IllegalOperation)
@@ -112,7 +112,7 @@ describe Spree::Order do
     end
 
     context 'when order is fulfilled' do
-      let(:order) { Spree::Order.new(:fulfilled => true) }
+      let(:order) { Spree::Order.new(fulfilled: true) }
 
       it 'raises' do
         expect{ order.void }.to raise_exception(Spree::IllegalOperation)
@@ -120,7 +120,7 @@ describe Spree::Order do
     end
 
     context 'when order is paid' do
-      let(:order) { Spree::Order.new(:paid => true) }
+      let(:order) { Spree::Order.new(paid: true) }
       before { order.void }
 
       it 'changes the state to voided' do
@@ -151,8 +151,8 @@ describe Spree::Order do
   end
 
   describe '#refund on saved order' do
-    let(:payment) { Spree::Payment.new(:amount => 100) }
-    subject(:order) { Spree::Order.new(:total => 100, :payments => [payment]) }
+    let(:payment) { Spree::Payment.new(amount: 100) }
+    subject(:order) { Spree::Order.new(total: 100, payments: [payment]) }
     before { order.save }
 
     context 'when order has not been paid' do
@@ -203,10 +203,10 @@ describe Spree::Order do
     end
 
     context 'when there are two payments' do
-      let(:payment_1) { Spree::Payment.new(:amount => 25) }
-      let(:payment_2) { Spree::Payment.new(:amount => 75) }
+      let(:payment_1) { Spree::Payment.new(amount: 25) }
+      let(:payment_2) { Spree::Payment.new(amount: 75) }
 
-      let(:order) { Spree::Order.new(:total => 100, :payments => [payment_1, payment_2]) }
+      let(:order) { Spree::Order.new(total: 100, payments: [payment_1, payment_2]) }
 
       context 'and the amount is less than the first payment' do
         before { order.refund 20 }
@@ -252,7 +252,7 @@ describe Spree::Order do
     before { order.save }
 
     context 'when order is not yet paid' do
-      let(:order) { Spree::Order.new(:paid => false, :payments => [payment]) }
+      let(:order) { Spree::Order.new(paid: false, payments: [payment]) }
 
       it 'should not create any refunds' do
         order.cancel
@@ -276,7 +276,7 @@ describe Spree::Order do
     end
 
     context 'when order is paid' do
-      let(:order) { Spree::Order.new(:paid => true, :total => 100, :customer => customer, :payments => [payment]) }
+      let(:order) { Spree::Order.new(paid: true, total: 100, customer: customer, payments: [payment]) }
       before { order.cancel }
 
       it 'changes the state to canceled' do

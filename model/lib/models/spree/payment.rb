@@ -2,13 +2,13 @@ module Spree
   class Payment < Spree::ModelBase
     include Virtus.model(finalize: false)
 
-    attribute :canceled, Boolean, :default => false
-    attribute :refunded, Boolean, :default => false
-    attribute :paid, Boolean, :default => false
-    attribute :partially_refunded, Boolean, :default => false
+    attribute :canceled, Boolean, default: false
+    attribute :refunded, Boolean, default: false
+    attribute :paid, Boolean, default: false
+    attribute :partially_refunded, Boolean, default: false
     attribute :customer, 'Spree::PaymentMethod'
     attribute :amount, Float
-    attribute :refund_balance, Float, :default => 0
+    attribute :refund_balance, Float, default: 0
 
     def cancel
       block_states('cancel', %w(refunded canceled paid partially_refunded))

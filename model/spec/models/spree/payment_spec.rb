@@ -5,7 +5,7 @@ describe Spree::Payment do
 
   describe '#cancel' do
     context 'when unpaid' do
-      subject(:payment) { Spree::Payment.new(:paid => false) }
+      subject(:payment) { Spree::Payment.new(paid: false) }
       before { payment.cancel }
 
       it 'changes the state to canceled' do
