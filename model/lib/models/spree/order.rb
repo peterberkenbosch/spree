@@ -34,6 +34,8 @@ module Spree
           payment.cancel
         end
       end
+
+      save
     end
 
     def ship
@@ -44,16 +46,22 @@ module Spree
 
       self.shipped = true
       shipments.each { |shipment| shipment.ship }
+
+      save
     end
 
     def void
       require_save 'void'
       block_states('void', %w(fulfilled shipped canceled voided))
       self.voided = true
+
+      save
     end
 
     def credit
       require_save 'credit'
+
+      save
     end
 
     def refund(amount=nil)
@@ -72,6 +80,7 @@ module Spree
       end
 
       self.refunds << refund
+      save
     end
 
     def save

@@ -52,14 +52,20 @@ describe Spree::Order do
 
     context 'when order is paid' do
       let(:order) { Spree::Order.new(:paid => true, :shipments => [shipment]) }
-      before { order.ship }
 
       it 'changes the state to shipped' do
+        order.ship
         expect(order.shipped?).to eq(true)
       end
 
       it 'ships the shipments' do
+        order.ship
         expect(shipment.shipped?).to eq(true)
+      end
+
+      it 'saves the order' do
+        expect(order).to receive(:save)
+        order.ship
       end
     end
   end
@@ -70,9 +76,14 @@ describe Spree::Order do
     context 'when order is not yet paid' do
       let(:order) { Spree::Order.new(:paid => false, :shipments => [shipment]) }
 
-      before { order.void }
       it 'changes the state to voided' do
+        order.void
         expect(order.voided?).to eq(true)
+      end
+
+      it 'saves the order' do
+        expect(order).to receive(:save)
+        order.void
       end
     end
 
@@ -149,6 +160,15 @@ describe Spree::Order do
 
       it 'raises an exception' do
         expect{ order.refund(100) }.to raise_exception(Spree::IllegalOperation)
+      end
+    end
+
+    context 'when order has been paid' do
+      before { order.paid = true }
+
+      it 'saves the order' do
+        expect(order).to receive(:save)
+        order.refund
       end
     end
 
@@ -232,21 +252,27 @@ describe Spree::Order do
     before { order.save }
 
     context 'when order is not yet paid' do
-      let(:order) { Spree::Order.new(:paid => false, :customer => customer, :payments => [payment]) }
-      before { order.cancel }
+      let(:order) { Spree::Order.new(:paid => false, :payments => [payment]) }
 
       it 'should not create any refunds' do
+        order.cancel
         expect(order.refunds.size).to eq(0)
       end
 
       it 'changes the state to canceled' do
+        order.cancel
         expect(order.canceled?).to eq(true)
       end
 
       it 'cancels the payments' do
+        order.cancel
         expect(payment.canceled?).to eq(true)
       end
 
+      it 'saves the order' do
+        expect(order).to receive(:save)
+        order.cancel
+      end
     end
 
     context 'when order is paid' do
