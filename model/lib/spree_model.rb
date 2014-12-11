@@ -8,6 +8,9 @@ Dir["./lib/exceptions/**/*.rb"].sort.each { |f| require f }
 # require models
 Dir["./lib/models/**/*.rb"].sort.each { |f| require f }
 
+# require configuration
+Dir["./lib/config/**/*.rb"].sort.each { |f| require f }
+
 Virtus.finalize
 
 # Remove annoying deprecation message
